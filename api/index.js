@@ -2,6 +2,7 @@ import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import useRouter from "./routes/user.route.js";
+import authRouter from "./routes/auth.route.js";
 
 dotenv.config();
 
@@ -18,12 +19,15 @@ mongoose
 
 const app = express();
 
+//this allows us to add ison as an input to server, as by default server doesn't receive any json
+app.use(express.json());
+
 //we use app.use to setup api route,and seperate them into route and controller files
 app.use("/api/user", useRouter);
-
 // app.get("/test", (req, res) => {
 //   res.send("Welcome to ZANE estate");
 // });
+app.use("/api/auth", authRouter);
 
 app.listen(3000, () => {
   console.log("server is running on port 3000!!!");
