@@ -1,6 +1,8 @@
 import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
+import useRouter from "./routes/user.route.js";
+
 dotenv.config();
 
 //we store key in the .env as this file will be ignored while uploading to github or other public website
@@ -15,6 +17,13 @@ mongoose
   });
 
 const app = express();
+
+//we use app.use to setup api route,and seperate them into route and controller files
+app.use("/api/user", useRouter);
+
+// app.get("/test", (req, res) => {
+//   res.send("Welcome to ZANE estate");
+// });
 
 app.listen(3000, () => {
   console.log("server is running on port 3000!!!");
