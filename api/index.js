@@ -30,7 +30,6 @@ app.use("/api/user", useRouter);
 app.use("/api/auth", authRouter);
 
 //here we create a middleware to handle err message
-
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;
   const message = err.message || "Internal server error";
