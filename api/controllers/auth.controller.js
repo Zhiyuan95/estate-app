@@ -19,6 +19,8 @@ export const signup = async (req, res, next) => {
   } catch (error) {
     //it shows error in insomnia rather than terminal
     // res.status(500).json(error.message);
+
+    //we call that middeleware func
     next(error);
   }
 };
