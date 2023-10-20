@@ -14,7 +14,7 @@ const OAuth = () => {
       const auth = getAuth(app);
 
       const result = await signInWithPopup(auth, provider);
-      const { username, email, photoURL } = result.user;
+      const { displayName, email, photoURL } = result.user;
 
       //save it to the db
       const res = await fetch("/api/auth/google", {
@@ -23,7 +23,7 @@ const OAuth = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          username: username,
+          username: displayName,
           email: email,
           photo: photoURL,
         }),
