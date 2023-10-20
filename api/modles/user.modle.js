@@ -16,6 +16,11 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    avatar: {
+      type: String,
+      default:
+        " https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQDz7PUpF5JZ-1a4Fe2QY09RDrOse8DGa1H_Q&usqp=CAU",
+    },
   },
   //time stamps is to record 2 things; one is the time of creation of a user; another is the time of updating a user
   //later if we want to sort users, we can use these 2 infos

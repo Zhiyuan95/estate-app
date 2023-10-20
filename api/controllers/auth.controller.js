@@ -1,6 +1,5 @@
 import User from "../modles/user.modle.js";
 import bcryptjs from "bcryptjs";
-import { errorHandler } from "../utils/error.js";
 import jwt from "jsonwebtoken";
 
 export const signup = async (req, res, next) => {
@@ -49,6 +48,44 @@ export const signin = async (req, res, next) => {
       .cookie("access_token", token, { httpOnly: true })
       .status(200)
       .json(rest);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const google = async (req, res, next) => {
+  try {
+    const user = await User.findOne({ email: req.body.email });
+    if (user) {
+      const token = jwt.sign({ id: user._id }, process.env.JWT_SECERT);
+      const { password: pass, ...rest } = user._doc;
+      res
+        .cookie("access_tolen", token, { httpOnly: true })
+        .status(200)
+        .json(rest);
+    } else {
+      //generate password
+      const generatedPassword =
+        Math.random().toString(32).slice(-8) +
+        Math.random().toString(32).slice(-8);
+      const hasedPassword = bcryptjs.hashSync(generatedPassword, 10);
+      //create new user
+      const newUser = new User({
+        username:
+          req.body.username?.split("").join("").toLowCase() +
+          Math.random().toString(32).slice(-4),
+        email: req.body.email,
+        avatar: req.body.photo,
+        password: hasedPassword,
+      });
+      await newUser.save();
+      const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECERT);
+      const { password: pass, ...rest } = newUser._doc;
+      res
+        .cookie("access_token", token, { httpOnly: true })
+        .status(200)
+        .json(rest);
+    }
   } catch (error) {
     next(error);
   }
