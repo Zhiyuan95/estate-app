@@ -1,7 +1,11 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { signStart, signInSuccess, signFailure } from "../redux/user/userSlice";
+import {
+  signStart,
+  signInSuccess,
+  signInFailure,
+} from "../redux/user/userSlice";
 import OAuth from "../component/OAuth";
 
 const SignIn = () => {
@@ -37,7 +41,7 @@ const SignIn = () => {
       if (data.success === false) {
         // setError(data.message);
         // setLoading(false);
-        dispatch(signFailure(data.message));
+        dispatch(signInFailure(data.message));
         return;
       }
       // setLoading(false);
@@ -47,7 +51,7 @@ const SignIn = () => {
     } catch (error) {
       // setLoading(false);
       // setError(error.message);
-      dispatch(signFailure(error.message));
+      dispatch(signInFailure(error.message));
     }
   };
 
