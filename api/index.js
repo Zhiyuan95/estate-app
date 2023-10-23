@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import useRouter from "./routes/user.route.js";
 import authRouter from "./routes/auth.route.js";
+import listingRouter from "./routes/listing.router.js";
 import cookieParser from "cookie-parser";
 dotenv.config();
 
@@ -31,6 +32,7 @@ app.use("/api/user", useRouter);
 //   res.send("Welcome to ZANE estate");
 // });
 app.use("/api/auth", authRouter);
+app.use("/api/listing", listingRouter);
 
 //here we create a middleware to handle err message
 app.use((err, req, res, next) => {
