@@ -19,6 +19,7 @@ import {
   signoutUserFailure,
 } from "../redux/user/userSlice";
 import { useDispatch } from "react-redux";
+import { Link } from "react-router-dom";
 
 const Profile = () => {
   const { currentUser, loading, error } = useSelector((state) => state.user);
@@ -28,7 +29,6 @@ const Profile = () => {
   const [fileUploadError, setFileUploadError] = useState(false);
   const [formData, setFormData] = useState({});
   const [updateSuccess, setUpdateSuccess] = useState(false);
-  console.log(`formData is formData`, formData);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -184,6 +184,12 @@ const Profile = () => {
         <button className="uppercase rounded-lg p-3 bg-slate-700 text-white hover:opacity-90 disabled:opacity-80">
           {loading ? loading : "update"}
         </button>
+        <Link
+          className="bg-green-700 text-white border p-3 text-center rounded-lg uppercase"
+          to={"/create-listing"}
+        >
+          create listing
+        </Link>
       </form>
       <div className="flex justify-between mt-2">
         <span
