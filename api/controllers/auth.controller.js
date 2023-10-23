@@ -40,7 +40,7 @@ export const signin = async (req, res, next) => {
     use token and cookie to do user authentication, token can be tought of a ID card and cookie is the
     mechanism that saves and provide this ID card automatically 
     */
-    const token = jwt.sign({ id: validUser._id }, process.env.JWT_SECERT);
+    const token = jwt.sign({ id: validUser._id }, process.env.JWT_SECRET);
     //remove password from va;idUser obj before server sending back user info and collect other data into rest obj
     const { password: pass, ...rest } = validUser._doc;
     res
@@ -56,10 +56,10 @@ export const google = async (req, res, next) => {
   try {
     const user = await User.findOne({ email: req.body.email });
     if (user) {
-      const token = jwt.sign({ id: user._id }, process.env.JWT_SECERT);
+      const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
       const { password: pass, ...rest } = user._doc;
       res
-        .cookie("access_tolen", token, { httpOnly: true })
+        .cookie("access_token", token, { httpOnly: true })
         .status(200)
         .json(rest);
     } else {
@@ -78,7 +78,7 @@ export const google = async (req, res, next) => {
         password: hasedPassword,
       });
       await newUser.save();
-      const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECERT);
+      const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET);
       const { password: pass, ...rest } = newUser._doc;
       res
         .cookie("access_token", token, { httpOnly: true })

@@ -1,22 +1,22 @@
 import { errorHandler } from "../utils/error.js";
-import bcrypt from "bcryptjs";
+import bcryptjs from "bcryptjs";
 import User from "../modles/user.modle.js";
 
 export const test = (req, res) => {
   res.send("Welcome to ZANE estate");
 };
 
-export const userUpdate = async (req, res, next) => {
-  if (req.user.id !== req.param.id)
+export const updateUser = async (req, res, next) => {
+  if (req.user.id !== req.params.id)
     return next(errorHandler(401, "You're not allowed to update this account"));
 
   try {
     if (req.body.password) {
-      req.body.password = bcrypt.hashSync(req.body.password, 10);
+      req.body.password = bcryptjs.hashSync(req.body.password, 10);
     }
 
     const updatedUser = await User.findByIdAndUpdate(
-      req.param.id,
+      req.params.id,
       {
         $set: {
           username: req.body.username,
@@ -28,7 +28,7 @@ export const userUpdate = async (req, res, next) => {
       { new: true }
     );
 
-    const { password: pass, ...rest } = updatedUser._doc;
+    const { password, ...rest } = updatedUser._doc;
     res.status(200).json(rest);
   } catch (error) {
     next(error);
