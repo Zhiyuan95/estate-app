@@ -134,7 +134,7 @@ const CreateListing = () => {
         body: JSON.stringify({ ...formData, userRef: currentUser._id }),
       });
 
-      const data = res.json();
+      const data = await res.json();
       setSubmitLoading(false);
       if (data.success === "false") {
         setSubmitLoading(false);

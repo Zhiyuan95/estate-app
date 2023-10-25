@@ -102,7 +102,7 @@ const Profile = () => {
       const res = await fetch(`api/user/delete/${currentUser._id}`, {
         method: "DELETE",
       });
-      const data = res.json();
+      const data = await res.json();
       if (data.success === false) {
         dispatch(deleteUserFailure(data));
         return;
@@ -117,7 +117,7 @@ const Profile = () => {
     try {
       dispatch(signoutUserStart());
       const res = await fetch("/api/user/signout");
-      const data = res.json();
+      const data = await res.json();
 
       if (data.success === false) {
         dispatch(signoutUserFailure(data));
@@ -151,7 +151,7 @@ const Profile = () => {
       const res = await fetch(`/api/listing/delete/${listingId}`, {
         method: "DELETE",
       });
-      const data = res.json();
+      const data = await res.json();
 
       if (data.success === false) {
         console.log(data.message);
