@@ -29,6 +29,8 @@ const Profile = () => {
   const [fileUploadError, setFileUploadError] = useState(false);
   const [formData, setFormData] = useState({});
   const [updateSuccess, setUpdateSuccess] = useState(false);
+  const [showUserListingError, setShowUserListingError] = useState(false);
+  const [userListings, setUserListings] = useState([]);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -127,6 +129,23 @@ const Profile = () => {
     }
   };
 
+  const handleShowListings = async () => {
+    try {
+      setShowUserListingError(false);
+      //in fetch the default method is GET
+      //GET aims to retrieve data from server, so no body required
+      const res = await fetch(`/api/user/listings/${currentUser._id}`);
+      const data = await res.json();
+      if (data.success === false) {
+        setShowUserListingError(true);
+        return;
+      }
+      setUserListings(data);
+    } catch (error) {
+      setShowUserListingError(error.message);
+    }
+  };
+
   return (
     <div className="mx-auto max-w-lg p-3">
       <h1 className="text-center font-semibold my-7 text-3xl">Profile</h1>
@@ -208,6 +227,59 @@ const Profile = () => {
       <p className="text-green-700">
         {updateSuccess ? "Update user successfully" : ""}{" "}
       </p>
+      <button
+        onClick={handleShowListings}
+        className="text-green-700 uppercase w-full"
+      >
+        show listings
+      </button>
+      <p className="text-red-700 mt-5">
+        {showUserListingError ? "Error showing listings" : ""}
+      </p>
+      {console.log(userListings.length)}
+      {userListings && userListings.length > 0 && (
+        <div className="flex flex-col gap-4">
+          <h1 className="text-center mt-7 2xl font-semibold">Your Listings</h1>
+          {userListings.map((listing) => (
+            <div
+              key={listing._id}
+              className="border rounded-lg p-3 flex justify-between items-center gap-4"
+            >
+              <Link to={`/listing/${listing._id}`}>
+                <img
+                  className="h-16 w16 object-contain rounded-lg"
+                  src={
+                    listing.imageUrls[
+                      Math.floor(Math.random() * listing.imageUrls.length)
+                    ]
+                  }
+                  alt="listing cover"
+                />
+              </Link>
+              <Link
+                className="font-semibold hover:underline text-slate-700 flex-1 truncate"
+                to={`/listing/${listing._id}`}
+              >
+                <span>{listing.name}</span>
+              </Link>
+              <div className="flex flex-col">
+                <button
+                  className="uppercase text-red-700 cursor-pointer"
+                  type="button"
+                >
+                  delete
+                </button>
+                <button
+                  className="uppercase text-green-700 cursor-pointer"
+                  type="button"
+                >
+                  edit
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
