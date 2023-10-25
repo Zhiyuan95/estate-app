@@ -4,14 +4,15 @@ import {
   ref,
   uploadBytesResumable,
 } from "firebase/storage";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { app } from "../firebase";
 import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
-const CreateListing = () => {
+const UpdateListing = () => {
   const { currentUser } = useSelector((state) => state.user);
   const navigate = useNavigate();
+  const params = useParams();
   const [files, setFiles] = useState([]);
   const [formData, setFormData] = useState({
     imageUrls: [],
@@ -27,11 +28,26 @@ const CreateListing = () => {
     offer: false,
     furnished: false,
   });
-  console.log("formData is:", formData);
   const [imageUploadError, setImageUploadError] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [submitError, setSubmitError] = useState(false);
   const [submitLoading, setSubmitLoading] = useState(false);
+  const listingId = params.listingId;
+
+  useEffect(() => {
+    //as we cant call an async func in useEffect, so need to define inside and call it
+    const fetchListing = async () => {
+      const res = await fetch(`/api/listing/get/${listingId}`);
+      const data = await res.json();
+      if (data.success === false) {
+        console.log(data.message);
+        return;
+      }
+      setFormData(data);
+    };
+
+    fetchListing();
+  }, []);
 
   const handleImagesUpload = () => {
     if (files.length > 0 && files.length + formData.imageUrls.length < 10) {
@@ -126,7 +142,7 @@ const CreateListing = () => {
       }
       setSubmitLoading(true);
       setSubmitError(false);
-      const res = await fetch("/api/listing/create", {
+      const res = await fetch(`/api/listing/update/${listingId}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -149,7 +165,7 @@ const CreateListing = () => {
   return (
     <main className="p-3 max-w-4xl mx-auto">
       <h1 className="text-center font-semibold my-7 text-3xl">
-        Create a Listing
+        Update a Listing
       </h1>
       <form className="flex flex-col sm:flex-row gap-4" onSubmit={handleSubmit}>
         {/* Left Side */}
@@ -351,7 +367,7 @@ const CreateListing = () => {
             }
             className="uppercase bg-slate-700 text-white text-center p-3 rounded-lg my-5 hover:opacity-90 disabled:opacity-80"
           >
-            {submitLoading ? "Creating..." : "create listing"}
+            {submitLoading ? "updating..." : "update listing"}
           </button>
           {submitError && (
             <p className="text-red-700 text-sm">{submitError} </p>
@@ -362,4 +378,4 @@ const CreateListing = () => {
   );
 };
 
-export default CreateListing;
+export default UpdateListing;
