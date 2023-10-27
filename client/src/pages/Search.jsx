@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import ListingCard from "../component/ListingCard";
 
 const Search = () => {
   const [sidebarState, setSidebarState] = useState({
@@ -12,8 +13,8 @@ const Search = () => {
     order: "desc",
   });
   const [loading, setLoading] = useState(false);
-  const [listing, setListing] = useState([]);
-  console.log("listing is", listing);
+  const [listings, setListings] = useState([]);
+  console.log("listing is", listings);
   console.log("sidebarState is:", sidebarState);
   const navigate = useNavigate();
   const handleChange = (e) => {
@@ -121,7 +122,7 @@ const Search = () => {
       const searchQuery = urlParams.toString();
       const res = await fetch(`api/listing/get?${searchQuery}`);
       const data = await res.json();
-      setListing(data);
+      setListings(data);
       if (data.success === false) {
         console.log(data.message);
       }
@@ -238,6 +239,23 @@ const Search = () => {
         <h1 className="capitalize text-3xl font-semibold border-b p-3 text-slate-700 mt-5">
           listing results
         </h1>
+        <div className="p-7 flex flex-wrap gap-4">
+          {!loading && listings.length === 0 && (
+            <h1 className="text-xl text-slate-700 capitalize">
+              no results found
+            </h1>
+          )}
+          {loading && (
+            <p className="text-xl text-slate-700 text-center w-full">
+              Loading...
+            </p>
+          )}
+          {!loading &&
+            listings &&
+            listings.map((listing) => (
+              <ListingCard key={listing._id} listing={listing} />
+            ))}
+        </div>
       </div>
     </div>
   );
