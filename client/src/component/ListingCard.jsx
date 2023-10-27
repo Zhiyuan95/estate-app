@@ -21,7 +21,7 @@ const ListingCard = (props) => {
           </p>
           <div className="flex items-center gap-1">
             <MdLocationOn className="h-4 w-4 text-green-700" />
-            <p className="text-sm text-gray-600 truncate w-full">
+            <p className="text-sm text-green-700 truncate w-full">
               {listing.address}
             </p>
           </div>
@@ -33,7 +33,7 @@ const ListingCard = (props) => {
             {listing.offer
               ? listing.discountedPrice.toLocaleString("en-AU")
               : listing.regularPrice.toLocaleString("en-AU")}
-            {listing.type === "rent" && " / month"}
+            {listing.type === "rent" && " / week"}
           </p>
           <div className="text-green-900 flex flex-row gap-4">
             <div className="font-semibold flex flex-row items-center gap-1 text-sm">
