@@ -14,6 +14,7 @@ const Search = () => {
   });
   const [loading, setLoading] = useState(false);
   const [listings, setListings] = useState([]);
+  const [showMore, setShowMore] = useState(false);
   console.log("listing is", listings);
   console.log("sidebarState is:", sidebarState);
   const navigate = useNavigate();
@@ -117,8 +118,9 @@ const Search = () => {
 
     /* fetch listing from DB */
 
-    const fetchListing = async () => {
+    const fetchListings = async () => {
       setLoading(true);
+      setShowMore(false);
       const searchQuery = urlParams.toString();
       const res = await fetch(`api/listing/get?${searchQuery}`);
       const data = await res.json();
@@ -126,11 +128,29 @@ const Search = () => {
       if (data.success === false) {
         console.log(data.message);
       }
+      if (data.length > 8) {
+        setShowMore(true);
+      } else {
+        setShowMore(false);
+      }
+      console.log(data.length);
       setLoading(false);
     };
-
-    fetchListing();
+    fetchListings();
   }, [location.search]);
+
+  const onShowMoreClick = async () => {
+    const numberOfListings = listings.length;
+    const startIndex = numberOfListings;
+    const urlParams = new URLSearchParams(location.search);
+    urlParams.set("startIndex", startIndex);
+    const searchQuery = urlParams.toString();
+    const res = await fetch(`/api/listing/get?${searchQuery}`);
+    const data = await res.json();
+    data.length < 9 && setShowMore(false);
+
+    setListings([...listings, ...data]);
+  };
 
   return (
     <div className="flex flex-col md:flex-row">
@@ -255,6 +275,15 @@ const Search = () => {
             listings.map((listing) => (
               <ListingCard key={listing._id} listing={listing} />
             ))}
+
+          {showMore && (
+            <button
+              onClick={onShowMoreClick}
+              className="text-green-700 cursor-pointer hover:underline p-7 w-full text-center"
+            >
+              Show more
+            </button>
+          )}
         </div>
       </div>
     </div>

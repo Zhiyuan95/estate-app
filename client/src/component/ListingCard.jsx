@@ -31,7 +31,7 @@ const ListingCard = (props) => {
           <p className="text-slate-500 mt-2 font-semibold ">
             $
             {listing.offer
-              ? listing.discountPrice.toLocaleString("en-AU")
+              ? listing.discountedPrice.toLocaleString("en-AU")
               : listing.regularPrice.toLocaleString("en-AU")}
             {listing.type === "rent" && " / month"}
           </p>
