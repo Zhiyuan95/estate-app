@@ -8,12 +8,11 @@ const Header = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
 
+  //it retruns query part of URL, params after '?' in url
   const urlParams = new URLSearchParams(window.location.search);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    //it retruns query part of URL, params after '?' in url
-    console.log("urlParams is:", urlParams);
     urlParams.set("searchTerm", searchTerm);
     navigate(`/search?${urlParams.toString()}`);
   };

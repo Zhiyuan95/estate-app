@@ -1,56 +1,231 @@
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+
 const Search = () => {
+  const [sidebarState, setSidebarState] = useState({
+    searchTerm: "",
+    type: "all",
+    offer: false,
+    parking: false,
+    furnished: false,
+    sort: "created_at",
+    order: "desc",
+  });
+  const [loading, setLoading] = useState(false);
+  const [listing, setListing] = useState([]);
+  console.log("listing is", listing);
+  console.log("sidebarState is:", sidebarState);
+  const navigate = useNavigate();
+  const handleChange = (e) => {
+    const {
+      id: targetId,
+      value: targetValue,
+      checked: targetChecked,
+    } = e.target;
+    ["all", "rent", "sell"].includes(targetId) &&
+      setSidebarState({ ...sidebarState, type: targetId });
+
+    targetId === "searchTerm" &&
+      setSidebarState({ ...sidebarState, searchTerm: targetValue || "" });
+
+    ["offer", "furnished", "parking"].includes(targetId) &&
+      setSidebarState({
+        ...sidebarState,
+        [targetId]: targetChecked || targetChecked === "true" ? true : false,
+      });
+
+    if (e.target.id === "sort_order") {
+      const sort = e.target.value.split("_")[0] || "created_at";
+
+      const order = e.target.value.split("_")[1] || "desc";
+
+      setSidebardata({ ...sidebardata, sort, order });
+    }
+  };
+
+  //pass form data to url
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const urlParams = new URLSearchParams();
+    // retrieve sidebarState obj, set each key-value pair as a query params
+    for (const [key, value] of Object.entries(sidebarState)) {
+      urlParams.set(key, value);
+    }
+    const searchQuery = urlParams.toString();
+    navigate(`/search?${searchQuery}`);
+  };
+
+  /* 
+  useEffect(() => {
+    const urlParams = new URLSearchParams(location.search);
+    const searchTermFromUrl = urlParams.get("searchTerm");
+    const typeFromUrl = urlParams.get("type");
+    const offerFromUrl = urlParams.get("offer");
+    const parkingFromUrl = urlParams.get("parking");
+    const furnishedFromUrl = urlParams.get("furnished");
+    const sortFromUrl = urlParams.get("sort");
+    const orderFromUrl = urlParams.get("order");
+
+    if (
+      searchTermFromUrl ||
+      typeFromUrl ||
+      offerFromUrl ||
+      parkingFromUrl ||
+      furnishedFromUrl ||
+      sortFromUrl ||
+      orderFromUrl
+    ) {
+      setSidebarState({
+        searchTerm: searchTermFromUrl || "",
+        type: typeFromUrl || "all",
+        parking: parkingFromUrl === "true" ? true : false,
+        furnished: furnishedFromUrl === "true" ? true : false,
+        offer: offerFromUrl === "true" ? true : false,
+        sort: sortFromUrl || "created_at",
+        order: orderFromUrl || "desc",
+      });
+    }
+  }, [location.search])*/
+
+  useEffect(() => {
+    /* pass url data to form */
+
+    const urlParams = new URLSearchParams(location.search);
+    // Define a mapping where keys are the state keys and values are the default values fetched from the URL.
+    const defaults = {
+      searchTerm: "",
+      type: "all",
+      offer: "false",
+      parking: "false",
+      furnished: "false",
+      sort: "created_at",
+      order: "desc",
+    };
+
+    let updatedState = {};
+
+    // Iterate over the mapping to set the state.
+    for (let key in defaults) {
+      if (key === "offer" || key === "parking" || key === "furnished") {
+        updatedState[key] = urlParams.get(key) === "true";
+      } else {
+        updatedState[key] = urlParams.get(key) || defaults[key];
+      }
+    }
+    setSidebarState((prevState) => ({ ...prevState, ...updatedState }));
+
+    /* fetch listing from DB */
+
+    const fetchListing = async () => {
+      setLoading(true);
+      const searchQuery = urlParams.toString();
+      const res = await fetch(`api/listing/get?${searchQuery}`);
+      const data = await res.json();
+      setListing(data);
+      if (data.success === false) {
+        console.log(data.message);
+      }
+      setLoading(false);
+    };
+
+    fetchListing();
+  }, [location.search]);
+
   return (
     <div className="flex flex-col md:flex-row">
       {/*left side */}
       <div className="p-7  border-b-2 md:border-r-2 md:min-h-screen">
-        <form className="flex flex-col gap-8">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-8">
           <div className="flex items-center gap-2">
             <label className="capitalize whitespace-nowrap font-semibold">
               search term:
             </label>
-            <input type="text" className="border rounded-lg p-3 w-full" />
+            <input
+              type="text"
+              id="searchTerm"
+              className="border rounded-lg p-3 w-full"
+              value={sidebarState.searchTerm}
+              onChange={handleChange}
+            />
           </div>
           <div className="flex gap-2 flex-wrap items-center">
             <label className="font-semibold">Type: </label>
             <div className="flex gap-2 items-center flex-wrap">
-              <input type="checkbox" className="w-5" id="all" />
+              <input
+                type="checkbox"
+                className="w-5"
+                id="all"
+                onChange={handleChange}
+                checked={sidebarState.type === "all"}
+              />
               <span>Rent & Sale</span>
             </div>
             <div className="flex gap-2 items-center flex-wrap">
-              <input type="checkbox" className="w-5" id="rent" />
+              <input
+                type="checkbox"
+                className="w-5"
+                id="rent"
+                onChange={handleChange}
+                checked={sidebarState.type === "rent"}
+              />
               <span>Rent</span>
             </div>
             <div className="flex gap-2 items-center flex-wrap">
-              <input type="checkbox" className="w-5" id="sell" />
+              <input
+                type="checkbox"
+                className="w-5"
+                id="sell"
+                onChange={handleChange}
+                checked={sidebarState.type === "sell"}
+              />
               <span>Sell</span>
             </div>
             <div className="flex gap-2 items-center flex-wrap">
-              <input type="checkbox" className="w-5" id="offer" />
+              <input
+                type="checkbox"
+                className="w-5"
+                id="offer"
+                onChange={handleChange}
+                checked={sidebarState.offer}
+              />
               <span>Offer</span>
             </div>
           </div>
           <div className="flex gap-2 flex-wrap items-center">
             <label className="font-semibold">Amenities: </label>
             <div className="flex gap-2 items-center flex-wrap">
-              <input type="checkbox" className="w-5" id="parking" />
+              <input
+                type="checkbox"
+                className="w-5"
+                id="parking"
+                onChange={handleChange}
+                checked={sidebarState.parking}
+              />
               <span>Parking</span>
             </div>
             <div className="flex gap-2 items-center flex-wrap">
-              <input type="checkbox" className="w-5" id="furnished" />
+              <input
+                type="checkbox"
+                className="w-5"
+                id="furnished"
+                onChange={handleChange}
+                checked={sidebarState.furnished}
+              />
               <span>Furnished</span>
             </div>
           </div>
           <div className="flex items-center gap-2">
             <label className="font-semibold">Sort:</label>
             <select
+              onChange={handleChange}
               defaultValue={"created_at_desc"}
               id="sort_order"
               className="border rounded-lg p-3"
             >
-              <option>Price high to low</option>
-              <option>Price low to hight</option>
-              <option>Latest</option>
-              <option>Oldest</option>
+              <option value="regularPrice_desc">Price high to low</option>
+              <option value="regularPrice_asc">Price low to hight</option>
+              <option value="createdAt_desc">Latest</option>
+              <option value="createdAt_asc">Oldest</option>
             </select>
           </div>
           <button className="bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-95">

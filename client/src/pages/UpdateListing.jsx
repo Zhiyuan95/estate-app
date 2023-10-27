@@ -125,7 +125,7 @@ const UpdateListing = () => {
       setFormData({ ...formData, [targetId]: checked });
 
     ["number", "text", "textarea"].includes(targetType) &&
-      setFormData({ ...formData, [targetId]: value });
+      setFormData({ ...formData, [targetId]: value || "" });
   };
 
   const handleSubmit = async (e) => {

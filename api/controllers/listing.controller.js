@@ -88,13 +88,13 @@ export const getListings = async (req, res, next) => {
       type = { $in: ["sell", "rent"] };
     }
 
-    const serachTerm = req.query.serachTerm || "";
+    const searchTerm = req.query.searchTerm || "";
     const sort = req.query.sort || "createdAt";
     const order = req.query.order || "desc";
 
     const listings = await Listing.find({
       //fuzzy search and case insensitive
-      name: { $regex: serachTerm, $options: "i" },
+      name: { $regex: searchTerm, $options: "i" },
       offer,
       furnished,
       parking,
