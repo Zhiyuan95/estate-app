@@ -163,7 +163,7 @@ const CreateListing = () => {
             minLength="10"
             required
             onChange={handleChange}
-            value={formData.name}
+            value={formData.name || ""}
           />
           <textarea
             type="text"

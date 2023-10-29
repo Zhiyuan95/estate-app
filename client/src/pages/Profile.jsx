@@ -116,7 +116,7 @@ const Profile = () => {
   const handleSignoutUser = async () => {
     try {
       dispatch(signoutUserStart());
-      const res = await fetch("/api/user/signout");
+      const res = await fetch("/api/auth/signout");
       const data = await res.json();
 
       if (data.success === false) {
@@ -242,7 +242,7 @@ const Profile = () => {
           Sign Out
         </span>
       </div>
-      <p className="text-red-700"> {error ? error : ""} </p>
+      <p className="text-red-700"> {error ? error.message : ""} </p>
       <p className="text-green-700">
         {updateSuccess ? "Update user successfully" : ""}{" "}
       </p>
