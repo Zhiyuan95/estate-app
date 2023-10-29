@@ -20,6 +20,7 @@ import {
 } from "../redux/user/userSlice";
 import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
+import { FaEyeSlash } from "react-icons/fa";
 
 const Profile = () => {
   const { currentUser, loading, error } = useSelector((state) => state.user);
@@ -31,6 +32,7 @@ const Profile = () => {
   const [updateSuccess, setUpdateSuccess] = useState(false);
   const [showUserListingError, setShowUserListingError] = useState(false);
   const [userListings, setUserListings] = useState([]);
+  const [showPassword, setShowPassword] = useState(false);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -211,13 +213,25 @@ const Profile = () => {
           defaultValue={currentUser.email}
           onChange={handleChange}
         />
-        <input
-          type="password"
-          id="password"
-          placeholder="password"
-          className="rounded-lg p-3 border"
-          onChange={handleChange}
-        />
+        <div className="relative">
+          <input
+            type={!showPassword ? "password" : "text"}
+            id="password"
+            placeholder="password"
+            className="pr-10 rounded-lg p-3 border w-full" // 注意这里的pr-10是为了留出button的空间
+            onChange={handleChange}
+          />
+          <button
+            type="button"
+            onClick={() => {
+              setShowPassword(!showPassword);
+            }}
+            className="absolute inset-y-0 right-3 top-1/2 transform -translate-y-1/2" // 这些类是为了使按钮在输入框的右侧垂直居中
+          >
+            <FaEyeSlash />
+          </button>
+        </div>
+
         <button className="uppercase rounded-lg p-3 bg-slate-700 text-white hover:opacity-90 disabled:opacity-80">
           {loading ? loading : "update"}
         </button>

@@ -27,7 +27,6 @@ const CreateListing = () => {
     offer: false,
     furnished: false,
   });
-  console.log("formData is:", formData);
   const [imageUploadError, setImageUploadError] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [submitError, setSubmitError] = useState(false);

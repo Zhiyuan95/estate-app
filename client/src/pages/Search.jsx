@@ -15,8 +15,6 @@ const Search = () => {
   const [loading, setLoading] = useState(false);
   const [listings, setListings] = useState([]);
   const [showMore, setShowMore] = useState(false);
-  console.log("listing is", listings);
-  console.log("sidebarState is:", sidebarState);
   const navigate = useNavigate();
   const handleChange = (e) => {
     const {
@@ -133,7 +131,6 @@ const Search = () => {
       } else {
         setShowMore(false);
       }
-      console.log(data.length);
       setLoading(false);
     };
     fetchListings();
